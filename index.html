@@ -100,7 +100,10 @@
     <div id="dialog" class="hidden">
       <div id="dialogSpeaker"></div>
       <div id="dialogText"></div>
-      <div id="dialogHint">Tekan <b>Space / E</b> untuk lanjut</div>
+      <div id="dialogHint">
+        <span class="hint-desktop">Tekan <b>Space / E</b> untuk lanjut</span>
+        <span class="hint-touch">Ketuk layar untuk lanjut</span>
+      </div>
     </div>
 
     <!-- Puzzle modal (Bento Layout) -->
@@ -297,6 +300,19 @@
         <button id="endRestartBtn" class="end-btn">Mainkan Ulang</button>
       </div>
     </div>
+
+  <!-- ===================== FULLSCREEN BUTTON (always on top) ===================== -->
+  <button id="fullscreenBtn" title="Fullscreen">⛶</button>
+
+  <!-- ===================== ORIENTATION PROMPT (portrait mobile only) ===================== -->
+  <div id="orientationPrompt">
+    <div class="orient-phone">
+      <div class="orient-screen"></div>
+      <div class="orient-dot"></div>
+    </div>
+    <p class="orient-text">Putar perangkat ke <b>landscape</b></p>
+    <p class="orient-sub">Rotate device to landscape</p>
+  </div>
 
   </div><!-- #viewport -->
 

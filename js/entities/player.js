@@ -36,8 +36,9 @@ export function handleMovement(dt) {
   const len = Math.hypot(dx, dy) || 1;
   const isSprinting = !!state.keys["shift"];
   const step = isSprinting ? CONFIG.sprintSpeed : CONFIG.moveSpeed;
-  const nx = state.player.x + (dx / len) * step;
-  const ny = state.player.y + (dy / len) * step;
+  const speedMultiplier = Math.min(dt, 100) / 16.67;
+  const nx = state.player.x + (dx / len) * step * speedMultiplier;
+  const ny = state.player.y + (dy / len) * step * speedMultiplier;
   const foot = CONFIG.playerSize * 0.35;
   if (isWalkable(nx, state.player.y + foot)) state.player.x = nx;
   if (isWalkable(state.player.x, ny + foot)) state.player.y = ny;

@@ -20,6 +20,8 @@ let isTyping = false;
 let typeInterval = null;
 
 function init() {
+  setupFullscreen();
+
   document.getElementById("startBtn")?.addEventListener("click", () => {
     const mainMenu = document.getElementById("mainMenu");
     mainMenu.style.opacity = "0";
@@ -173,9 +175,14 @@ function startGame() {
   // Map close button
   document.getElementById("mapCloseBtn")?.addEventListener("click", closeMap);
 
-  // Nav buttons
+  // Nav buttons — click (desktop) + touchstart (mobile, bypasses 300ms delay)
   document.querySelectorAll(".nav-btn[data-panel]").forEach(btn => {
     btn.addEventListener("click", () => openPanel(btn.dataset.panel));
+    btn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      audio.playClick();
+      openPanel(btn.dataset.panel);
+    }, { passive: false });
   });
 
   // Panel close buttons
@@ -198,8 +205,13 @@ function startGame() {
   document.getElementById("puzzleSubmit")?.addEventListener("click", submitPuzzle);
   document.getElementById("puzzleClose")?.addEventListener("click", closePuzzle);
 
-  // Click dialog to advance
-  document.getElementById("dialog")?.addEventListener("click", advanceDialog);
+  // Click dialog to advance (desktop) + touchstart (mobile)
+  const dialogEl = document.getElementById("dialog");
+  dialogEl?.addEventListener("click", advanceDialog);
+  dialogEl?.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    advanceDialog();
+  }, { passive: false });
 
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup",   onKeyUp);
@@ -207,6 +219,33 @@ function startGame() {
 
   setupTouchControls();
   requestAnimationFrame(loop);
+}
+
+function setupFullscreen() {
+  const btn = document.getElementById("fullscreenBtn");
+  if (!btn) return;
+
+  const update = () => {
+    const inFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    btn.textContent = inFS ? "⊡" : "⛶";
+    btn.title = inFS ? "Exit Fullscreen" : "Fullscreen";
+  };
+
+  const toggle = (e) => {
+    e.preventDefault();
+    const inFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (!inFS) {
+      (document.documentElement.requestFullscreen?.() ||
+       document.documentElement.webkitRequestFullscreen?.())?.catch(() => {});
+    } else {
+      (document.exitFullscreen?.() || document.webkitExitFullscreen?.())?.catch(() => {});
+    }
+  };
+
+  btn.addEventListener("click", toggle);
+  btn.addEventListener("touchstart", toggle, { passive: false });
+  document.addEventListener("fullscreenchange", update);
+  document.addEventListener("webkitfullscreenchange", update);
 }
 
 function setupTouchControls() {

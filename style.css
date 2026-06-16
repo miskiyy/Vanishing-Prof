@@ -1325,3 +1325,113 @@ html, body {
     padding-bottom: max(8px, env(safe-area-inset-bottom));
   }
 }
+
+/* =====================================================================
+ * DIALOG HINT — responsive text
+ * ===================================================================== */
+.hint-touch  { display: none; }
+.hint-desktop { display: inline; }
+
+@media (hover: none) and (pointer: coarse) {
+  .hint-touch   { display: inline; }
+  .hint-desktop { display: none; }
+}
+
+/* =====================================================================
+ * FULLSCREEN BUTTON
+ * ===================================================================== */
+#fullscreenBtn {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  width: 36px;
+  height: 36px;
+  background: rgba(8, 10, 18, 0.75);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 7px;
+  color: rgba(255,255,255,0.55);
+  font-size: 17px;
+  cursor: pointer;
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  line-height: 1;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+}
+#fullscreenBtn:hover,
+#fullscreenBtn:active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(8, 10, 18, 0.95);
+}
+
+/* =====================================================================
+ * ORIENTATION PROMPT (portrait + touch device only)
+ * ===================================================================== */
+#orientationPrompt {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #06070a;
+  z-index: 9999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  color: #fff;
+  text-align: center;
+  padding: 40px;
+}
+
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  #orientationPrompt { display: flex; }
+}
+
+/* Phone icon that animates into landscape */
+.orient-phone {
+  position: relative;
+  width: 52px;
+  height: 86px;
+  border: 3px solid var(--accent);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: phone-tilt 2.4s ease-in-out infinite;
+}
+.orient-screen {
+  width: 34px;
+  height: 54px;
+  background: rgba(255,213,74,0.12);
+  border-radius: 4px;
+}
+.orient-dot {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+@keyframes phone-tilt {
+  0%, 35%  { transform: rotate(0deg); }
+  65%, 100% { transform: rotate(-90deg); }
+}
+
+.orient-text {
+  font-size: 18px;
+  color: #e0e4f0;
+  letter-spacing: 0.3px;
+}
+.orient-sub {
+  font-size: 13px;
+  color: var(--dim);
+}
