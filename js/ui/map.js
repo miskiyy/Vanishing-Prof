@@ -70,15 +70,18 @@ export function showEnding() {
           epiAnim.classList.add("start");
           setTimeout(() => {
             epiHint.classList.remove("hidden");
-            const onSpace = (e) => {
-              if (e.code === "Space") {
-                e.preventDefault();
-                window.removeEventListener("keydown", onSpace);
-                epiScreen.classList.add("hidden");
-                document.getElementById("endScreen")?.classList.remove("hidden");
-              }
+            const advanceEpilogue = (e) => {
+              if (e && e.type === "keydown" && e.code !== "Space") return;
+              if (e && typeof e.preventDefault === "function") e.preventDefault();
+              window.removeEventListener("keydown", advanceEpilogue);
+              epiScreen.removeEventListener("click", advanceEpilogue);
+              epiScreen.removeEventListener("touchstart", advanceEpilogue);
+              epiScreen.classList.add("hidden");
+              document.getElementById("endScreen")?.classList.remove("hidden");
             };
-            window.addEventListener("keydown", onSpace);
+            window.addEventListener("keydown", advanceEpilogue);
+            epiScreen.addEventListener("click", advanceEpilogue);
+            epiScreen.addEventListener("touchstart", advanceEpilogue, { passive: false });
           }, 4500);
         }, 100);
       }, 1000);

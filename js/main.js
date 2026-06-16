@@ -67,6 +67,18 @@ function init() {
     }
   });
 
+  // Touch/click to advance prologue
+  const prologueScreen = document.getElementById("prologueScreen");
+  const handlePrologueTap = (e) => {
+    if (prologueScreen && !prologueScreen.classList.contains("hidden")) {
+      e.preventDefault();
+      advancePrologue();
+    }
+  };
+  prologueScreen?.addEventListener("click", handlePrologueTap);
+  prologueScreen?.addEventListener("touchstart", handlePrologueTap, { passive: false });
+
+
   // End screen restart / credits button
   document.getElementById("endRestartBtn")?.addEventListener("click", () => {
     document.getElementById("endScreen")?.classList.add("hidden");
@@ -205,13 +217,19 @@ function startGame() {
   document.getElementById("puzzleSubmit")?.addEventListener("click", submitPuzzle);
   document.getElementById("puzzleClose")?.addEventListener("click", closePuzzle);
 
-  // Click dialog to advance (desktop) + touchstart (mobile)
-  const dialogEl = document.getElementById("dialog");
-  dialogEl?.addEventListener("click", advanceDialog);
-  dialogEl?.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    advanceDialog();
-  }, { passive: false });
+  // Click anywhere on game container to advance dialog
+  const gameContainer = document.getElementById("gameContainer");
+  const handleDialogTap = (e) => {
+    const dialogEl = document.getElementById("dialog");
+    if (dialogEl && !dialogEl.classList.contains("hidden")) {
+      // Don't advance if tapping a UI button (including touch buttons, nav buttons)
+      if (e.target.closest("button")) return;
+      e.preventDefault();
+      advanceDialog();
+    }
+  };
+  gameContainer?.addEventListener("click", handleDialogTap);
+  gameContainer?.addEventListener("touchstart", handleDialogTap, { passive: false });
 
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup",   onKeyUp);
