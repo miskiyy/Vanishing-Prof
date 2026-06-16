@@ -2,7 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <title>The Vanishing Professor</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -231,6 +234,25 @@
       </div>
       <div class="panel-body" id="boardContent">
         <svg id="boardSVG" viewBox="0 0 530 460" width="100%"></svg>
+      </div>
+    </div>
+
+    <!-- ===================== TOUCH CONTROLS (mobile only) ===================== -->
+    <div id="touchControls">
+      <div id="dpad">
+        <div></div>
+        <button class="dpad-btn" id="dpad-up">▲</button>
+        <div></div>
+        <button class="dpad-btn" id="dpad-left">◀</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-btn" id="dpad-right">▶</button>
+        <div></div>
+        <button class="dpad-btn" id="dpad-down">▼</button>
+        <div></div>
+      </div>
+      <div id="touchActionBtns">
+        <button class="touch-action-btn" id="touchInteract">E</button>
+        <button class="touch-action-btn touch-action-map" id="touchMap">M</button>
       </div>
     </div>
 

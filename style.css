@@ -1170,3 +1170,158 @@ html, body {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* =====================================================================
+ * NAV — fix tap responsiveness
+ * ===================================================================== */
+.nav-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =====================================================================
+ * TOUCH CONTROLS (D-pad + action buttons, mobile only)
+ * ===================================================================== */
+#touchControls {
+  display: none;
+  position: absolute;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: max(16px, env(safe-area-inset-left));
+  right: calc(var(--nav-w) + 10px);
+  z-index: 150;
+  pointer-events: none;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+#dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  grid-template-rows: repeat(3, 52px);
+  gap: 4px;
+  pointer-events: auto;
+}
+.dpad-center {
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+}
+.dpad-btn {
+  background: rgba(10,14,28,0.75);
+  border: 2px solid rgba(255,255,255,0.22);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.8);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: background 0.1s;
+}
+.dpad-btn:active { background: rgba(74,90,128,0.6); }
+
+#touchActionBtns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: auto;
+  align-items: center;
+}
+.touch-action-btn {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: rgba(10,14,28,0.75);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  font-family: var(--ui-font);
+  transition: background 0.1s;
+}
+.touch-action-btn:active { background: rgba(255,213,74,0.25); }
+.touch-action-map {
+  border-color: #66aaff;
+  color: #66aaff;
+}
+
+/* =====================================================================
+ * RESPONSIVE — mobile (touch device)
+ * ===================================================================== */
+@media (hover: none) and (pointer: coarse) {
+  #touchControls { display: flex; }
+  #controls { display: none; }
+}
+
+/* =====================================================================
+ * RESPONSIVE — landscape mobile (small height)
+ * ===================================================================== */
+@media (max-height: 520px) {
+  :root {
+    --nav-w: 62px;
+    --panel-w: min(340px, 72vw);
+  }
+
+  /* Smaller nav buttons */
+  .nav-btn { padding: 8px 4px 6px; font-size: 9px; }
+  .nav-btn img { width: 28px; height: 28px; }
+  #sideNav { gap: 0; padding: 4px 4px; }
+
+  /* Smaller dialog */
+  #dialog { padding: 12px 16px; }
+  #dialogText { font-size: 14px; }
+  #dialogHint { font-size: 10px; margin-top: 8px; }
+
+  /* Puzzle: stack vertically */
+  #bentoBox {
+    flex-direction: column;
+    width: min(98vw, 700px);
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  #bentoLeft { min-width: 0; }
+  #bentoRight { min-width: 0; flex: 0 0 auto; }
+
+  /* Compact touch controls */
+  #dpad {
+    grid-template-columns: repeat(3, 46px);
+    grid-template-rows: repeat(3, 46px);
+    gap: 3px;
+  }
+  .dpad-btn { font-size: 15px; }
+  .touch-action-btn { width: 50px; height: 50px; font-size: 15px; }
+  #touchControls { bottom: 10px; }
+}
+
+/* =====================================================================
+ * RESPONSIVE — narrow screens (small width, e.g. portrait phones)
+ * ===================================================================== */
+@media (max-width: 500px) {
+  :root {
+    --nav-w: 58px;
+    --panel-w: calc(100vw - var(--nav-w));
+  }
+
+  .nav-btn { padding: 8px 2px 6px; font-size: 8px; }
+  .nav-btn img { width: 26px; height: 26px; }
+
+  #dialog { width: 92vw; padding: 12px 14px; }
+  #dialogText { font-size: 14px; }
+
+  .modal-box { padding: 20px 16px; }
+  .modal-header h2 { font-size: 18px; }
+}
+
+/* =====================================================================
+ * RESPONSIVE — safe area for notched / rounded phones
+ * ===================================================================== */
+@supports (padding: env(safe-area-inset-bottom)) {
+  #sideNav {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}

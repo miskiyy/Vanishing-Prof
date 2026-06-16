@@ -2,7 +2,7 @@ import { CONFIG } from './config.js';
 import { state } from './state.js';
 import { loadRoom } from './entities/room.js';
 import { loop } from './engine/loop.js';
-import { onKeyDown, onKeyUp } from './engine/input.js';
+import { onKeyDown, onKeyUp, interact } from './engine/input.js';
 import { openMap, closeMap } from './ui/map.js';
 import { openPanel, closePanel, renderInventoryPanel, renderNotebookPanel, renderQuestsPanel, renderCiphersPanel, renderBoardPanel, setFlag, addInventoryItem } from './ui/panels.js';
 import { advanceDialog } from './ui/dialog.js';
@@ -205,7 +205,50 @@ function startGame() {
   window.addEventListener("keyup",   onKeyUp);
   window.addEventListener("blur", () => { state.keys = {}; });
 
+  setupTouchControls();
   requestAnimationFrame(loop);
+}
+
+function setupTouchControls() {
+  // D-pad → state.keys
+  const dpadMap = { 'dpad-up': 'w', 'dpad-down': 's', 'dpad-left': 'a', 'dpad-right': 'd' };
+  for (const [id, key] of Object.entries(dpadMap)) {
+    const btn = document.getElementById(id);
+    if (!btn) continue;
+    const press   = (e) => { e.preventDefault(); state.keys[key] = true; };
+    const release = (e) => { e.preventDefault(); state.keys[key] = false; };
+    btn.addEventListener('touchstart',  press,   { passive: false });
+    btn.addEventListener('touchend',    release, { passive: false });
+    btn.addEventListener('touchcancel', release, { passive: false });
+  }
+
+  // E button — context-sensitive: advance dialog OR interact
+  const eBtn = document.getElementById('touchInteract');
+  if (eBtn) {
+    eBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      audio.playClick();
+      const dialogEl = document.getElementById('dialog');
+      const puzzleEl = document.getElementById('puzzleOverlay');
+      if (puzzleEl && !puzzleEl.classList.contains('hidden')) {
+        submitPuzzle();
+      } else if (dialogEl && !dialogEl.classList.contains('hidden')) {
+        advanceDialog();
+      } else {
+        interact();
+      }
+    }, { passive: false });
+  }
+
+  // M button — open/close map
+  const mBtn = document.getElementById('touchMap');
+  if (mBtn) {
+    mBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      audio.playClick();
+      if (state.mapOpen) closeMap(); else openMap();
+    }, { passive: false });
+  }
 }
 
 // Dev console helpers
