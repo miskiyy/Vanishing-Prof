@@ -49,8 +49,10 @@ export function openPuzzle(puzzleId) {
   puzzleOverlayEl.dataset.puzzleId = puzzleId;
 
   // Render tutorial on the right if available
+  const toggleHelpBtn = document.getElementById("puzzleToggleHelp");
   if (p.tutorial) {
     bentoRight.classList.remove("hidden");
+    if (toggleHelpBtn) toggleHelpBtn.classList.remove("hidden");
     document.getElementById("tutorialTitle").textContent = "Panduan: " + p.kind;
     document.getElementById("tutSejarah").textContent = p.tutorial.sejarah;
     document.getElementById("tutKeunggulan").textContent = p.tutorial.keunggulan;
@@ -58,6 +60,7 @@ export function openPuzzle(puzzleId) {
     document.getElementById("tutCaraKerja").textContent = p.tutorial.caraKerja;
   } else {
     bentoRight.classList.add("hidden");
+    if (toggleHelpBtn) toggleHelpBtn.classList.add("hidden");
   }
 
   // Reset Simulator UI
@@ -280,6 +283,7 @@ export function showPuzzleSuccessDialog(p, onDone) {
 export function closePuzzle() {
   const puzzleOverlayEl = document.getElementById("puzzleOverlay");
   puzzleOverlayEl?.classList.add("hidden");
+  document.getElementById("bentoBox")?.classList.remove("show-help");
   const dialogOpen = !document.getElementById("dialog")?.classList.contains("hidden");
   if (!state.openPanel && !dialogOpen) {
     state.modalOpen = false;

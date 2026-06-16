@@ -216,6 +216,12 @@ function startGame() {
   // Puzzle submit / close
   document.getElementById("puzzleSubmit")?.addEventListener("click", submitPuzzle);
   document.getElementById("puzzleClose")?.addEventListener("click", closePuzzle);
+  document.getElementById("puzzleToggleHelp")?.addEventListener("click", () => {
+    document.getElementById("bentoBox")?.classList.add("show-help");
+  });
+  document.getElementById("puzzleCloseHelp")?.addEventListener("click", () => {
+    document.getElementById("bentoBox")?.classList.remove("show-help");
+  });
 
   // Click anywhere on game container to advance dialog
   const gameContainer = document.getElementById("gameContainer");
