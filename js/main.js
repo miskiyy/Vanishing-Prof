@@ -22,6 +22,38 @@ let typeInterval = null;
 function init() {
   setupFullscreen();
 
+  // Asset Preloading
+  import('./utils/preloader.js').then(m => {
+    m.preloadAssets(
+      (percent, url) => {
+        const progressBar = document.getElementById("progressBar");
+        const statusText = document.getElementById("loadingStatus");
+        const fileText = document.getElementById("loadingFile");
+        if (progressBar) progressBar.style.width = percent + "%";
+        if (statusText) statusText.textContent = percent + "%";
+        if (fileText) {
+          const filename = url.substring(url.lastIndexOf('/') + 1);
+          fileText.textContent = `Memuat: ${filename}`;
+        }
+      },
+      () => {
+        const fileText = document.getElementById("loadingFile");
+        const playBtn = document.getElementById("loadingPlayBtn");
+        if (fileText) fileText.textContent = "Berkas penyelidikan siap.";
+        if (playBtn) {
+          playBtn.classList.remove("hidden");
+          playBtn.addEventListener("click", () => {
+            document.getElementById("loadingScreen").classList.add("fade-out");
+            if (!audio.bgmStarted) {
+              audio.playBGM();
+              audio.bgmStarted = true;
+            }
+          });
+        }
+      }
+    );
+  });
+
   document.getElementById("startBtn")?.addEventListener("click", () => {
     const mainMenu = document.getElementById("mainMenu");
     mainMenu.style.opacity = "0";
@@ -187,14 +219,12 @@ function startGame() {
   // Map close button
   document.getElementById("mapCloseBtn")?.addEventListener("click", closeMap);
 
-  // Nav buttons — click (desktop) + touchstart (mobile, bypasses 300ms delay)
+  // Nav buttons — click (handles both desktop and mobile tapping safely)
   document.querySelectorAll(".nav-btn[data-panel]").forEach(btn => {
-    btn.addEventListener("click", () => openPanel(btn.dataset.panel));
-    btn.addEventListener("touchstart", (e) => {
+    btn.addEventListener("click", (e) => {
       e.preventDefault();
-      audio.playClick();
       openPanel(btn.dataset.panel);
-    }, { passive: false });
+    });
   });
 
   // Panel close buttons

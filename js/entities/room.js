@@ -57,58 +57,7 @@ export function loadRoom(roomId) {
     g.style.height = (obj.spriteHeight || obj.spriteSize || 64) + "px";
     objLayerEl.appendChild(g);
 
-    // --- DRAG AND DROP FOR EDITING ---
-    if (s) {
-      s.style.transition = "transform 0.1s";
-      s.addEventListener("mouseenter", () => { s.style.transform = "translate(-50%, -50%) scale(1.1)"; s.style.filter = "drop-shadow(0 0 10px red)"; });
-      s.addEventListener("mouseleave", () => { s.style.transform = "translate(-50%, -50%) scale(1)"; s.style.filter = ""; });
-
-      let isDragging = false;
-      s.addEventListener("mousedown", (e) => {
-        console.log("MOUSEDOWN FIRED ON", obj.id);
-        e.preventDefault();
-        isDragging = true;
-        s.style.cursor = "grabbing";
-        s.style.zIndex = "999";
-        
-        let startX = e.clientX;
-        let startY = e.clientY;
-        let startLeft = parseInt(s.style.left, 10) || obj.x;
-        let startTop = parseInt(s.style.top, 10) || obj.y;
-
-        const onMouseMove = (moveEvent) => {
-          if (!isDragging) return;
-          const dx = moveEvent.clientX - startX;
-          const dy = moveEvent.clientY - startY;
-          const newX = startLeft + dx;
-          const newY = startTop + dy;
-          
-          s.style.left = newX + "px";
-          s.style.top = newY + "px";
-          h.style.left = newX + "px";
-          h.style.top = newY + "px";
-          g.style.left = newX + "px";
-          g.style.top = newY + "px";
-        };
-
-        const onMouseUp = (upEvent) => {
-          isDragging = false;
-          s.style.cursor = "";
-          s.style.zIndex = "";
-          const finalX = parseInt(s.style.left, 10);
-          const finalY = parseInt(s.style.top, 10);
-          
-          console.log(`[DragDrop] Updated ${obj.id}: x=${finalX}, y=${finalY}`);
-          prompt(`Koordinat baru untuk '${obj.id}':\nCopy & berikan ke AI!`, `Objek: ${obj.id} | x: ${finalX}, y: ${finalY}`);
-          
-          window.removeEventListener("mousemove", onMouseMove);
-          window.removeEventListener("mouseup", onMouseUp);
-        };
-
-        window.addEventListener("mousemove", onMouseMove);
-        window.addEventListener("mouseup", onMouseUp);
-      });
-    }
+    // Drag and drop removed.
   }
 
   // debug walkable polygon (with hole support, fill-rule evenodd)

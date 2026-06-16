@@ -1271,17 +1271,31 @@ html, body {
 
   /* Main menu adjustments */
   #mainMenu {
-    background-size: contain;
-    background-position: center top;
+    background-size: cover;
+    background-position: center;
+    align-items: flex-end;
+    padding-bottom: 24px;
   }
   #menuContent {
-    margin-top: 55vh;
-    padding: 20px 30px;
-    transform: scale(0.85);
-    transform-origin: top center;
+    margin-top: 0;
+    padding: 10px;
+    background: transparent;
+    backdrop-filter: none;
+    transform: none;
+    width: 100%;
   }
-  .menu-title { font-size: 32px; }
-  .menu-subtitle { font-size: 14px; margin-bottom: 20px; }
+  .menu-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+  }
+  .menu-btn, .menu-btn.alt-btn {
+    width: auto;
+    max-width: none;
+    padding: 10px 16px;
+    font-size: 12px;
+  }
 
 
   /* Smaller nav buttons */
@@ -1513,4 +1527,82 @@ html, body {
 .orient-sub {
   font-size: 13px;
   color: var(--dim);
+}
+
+/* =====================================================================
+ * LOADING SCREEN
+ * ===================================================================== */
+#loadingScreen {
+  position: absolute;
+  inset: 0;
+  background-color: #06070a;
+  background-image: url("Asset/bg/tile.png");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  transition: opacity 0.8s ease-in-out, visibility 0.8s;
+  text-align: center;
+}
+#loadingScreen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+#loadingContent {
+  width: min(450px, 90vw);
+  background: rgba(10, 12, 20, 0.9);
+  padding: 40px;
+  border-radius: 14px;
+  border: 1px solid #4a5a80;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+.loading-title {
+  font-family: "Consolas", monospace;
+  font-size: 26px;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(117, 255, 145, 0.2);
+}
+.loading-subtitle {
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 24px;
+}
+.progress-container {
+  width: 100%;
+  height: 6px;
+  background: #181d2b;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+#progressBar {
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  transition: width 0.15s ease-out;
+}
+#loadingStatus {
+  font-family: "Consolas", monospace;
+  font-size: 20px;
+  color: var(--accent);
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.loading-file {
+  font-family: "Consolas", monospace;
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 20px;
+}
+#loadingPlayBtn {
+  margin: 10px auto 0;
+  display: block;
 }
