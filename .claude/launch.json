@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "office-game",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5512"],
+      "port": 5512,
+      "cwd": "C:\\Users\\ASUS ZENBOOK\\Documents\\1. College\\Game ed\\Vanishing Prof"
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Vanishing Professor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="viewport">
+    
+    <!-- ===================== MAIN MENU ===================== -->
+    <div id="mainMenu">
+      <div id="menuContent">
+        <div class="menu-buttons">
+          <button id="startBtn" class="menu-btn">Mulai Investigasi</button>
+          <button id="storyBtn" class="menu-btn alt-btn">Cerita & Referensi</button>
+          <button id="creditBtn" class="menu-btn alt-btn">Kredit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== STORY & REFERENCE MODAL ===================== -->
+    <div id="storyScreen" class="hidden">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>Cerita & Referensi Kriptografi</h2>
+          <button class="modal-close" id="storyCloseBtn">✕</button>
+        </div>
+        <div class="modal-body">
+          <h3>Apa itu Kriptografi?</h3>
+          <p>Kriptografi adalah praktik dan studi tentang teknik komunikasi aman di hadapan pihak ketiga. Dalam game ini, Anda memecahkan berbagai sandi historis seperti Caesar, Morse, Vigenère, Atbash, dan Binary untuk mengungkap misteri hilangnya Profesor Arga.</p>
+          <br>
+          <h3>Referensi & Sumber</h3>
+          <ul>
+            <li><a href="https://cryptii.com" target="_blank">Cryptii</a> - Referensi cara kerja berbagai sandi.</li>
+            <li><a href="https://en.wikipedia.org/wiki/" target="_blank">Wikipedia</a> - Sejarah masing-masing cipher.</li>
+            <li><a href="https://www.geeksforgeeks.org/ethical-hacking" target="_blank">GeeksForGeeks</a> - Konsep Ethical Hacking & keamanan.</li>
+            <li><strong>ChatGPT</strong> - Bantuan pembuatan teks, alur, & kustomisasi aset.</li>
+            <li><strong>Pixabay</strong> - Sumber efek suara (SFX) gratis.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== CREDITS MODAL ===================== -->
+    <div id="creditScreen" class="hidden">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>Kredit</h2>
+          <button class="modal-close" id="creditCloseBtn">✕</button>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+          <p><strong>The Vanishing Professor</strong></p>
+          <br>
+          <p>Dikembangkan sebagai proyek edukasi interaktif.</p>
+          <br>
+          <p>Semua aset gambar & teks dibantu oleh AI.</p>
+          <p>Efek Suara dari Pixabay.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== NAME INPUT SCREEN ===================== -->
+    <div id="nameScreen" class="hidden">
+      <div class="modal-box" style="text-align: center;">
+        <h2 style="color: var(--accent); margin-bottom: 20px;">Identitas Detektif</h2>
+        <p style="color: #cfd2dc; margin-bottom: 20px;">Siapa namamu?</p>
+        <input type="text" id="playerNameInput" class="menu-input" placeholder="Masukkan namamu..." autocomplete="off" />
+        <button id="confirmNameBtn" class="menu-btn" style="padding: 10px 20px; font-size: 16px;">Konfirmasi</button>
+      </div>
+    </div>
+
+    <!-- ===================== PROLOGUE ===================== -->
+    <div id="prologueScreen" class="hidden">
+      <div id="prologueText"></div>
+      <div id="prologueHint" class="hidden">Tekan Space/E untuk lanjut</div>
+    </div>
+
+    <!-- ===================== GAME CONTAINER ===================== -->
+    <div id="gameContainer" class="hidden">
+      <!-- World = peta ukuran penuh, digeser oleh kamera -->
+      <div id="world">
+        <div id="background"></div>
+        <div id="objectLayer"></div>
+        <div id="player"></div>
+      </div>
+
+    <!-- HUD -->
+    <div id="prompt" class="hidden">Press <b>E</b></div>
+    <div id="controls">
+      WASD / Arrow keys &nbsp;·&nbsp; Shift lari &nbsp;·&nbsp; E interaksi
+      &nbsp;·&nbsp; I/N/J/C/B menu
+    </div>
+
+    <!-- Dialog box -->
+    <div id="dialog" class="hidden">
+      <div id="dialogSpeaker"></div>
+      <div id="dialogText"></div>
+      <div id="dialogHint">Tekan <b>Space / E</b> untuk lanjut</div>
+    </div>
+
+    <!-- Puzzle modal (Bento Layout) -->
+    <div id="puzzleOverlay" class="hidden">
+      <div id="bentoBox">
+        
+        <!-- Kiri: Simulator & Puzzle -->
+        <div id="bentoLeft" class="bento-panel">
+          <div id="puzzleTitle"></div>
+          <div id="puzzleKind"></div>
+          <pre id="puzzlePrompt"></pre>
+          <div class="puzzle-cipher" id="puzzleCipherContainer">
+            <span class="puzzle-label">Encrypted:</span>
+            <code id="puzzleCipher"></code>
+          </div>
+          <div id="puzzleSimulatorContainer" class="hidden"></div>
+          <input id="puzzleInput" type="text" autocomplete="off"
+                 placeholder="Ketik jawaban di sini..." />
+          <div id="puzzleFeedback"></div>
+          <div class="puzzle-actions">
+            <button id="puzzleSubmit">Submit</button>
+            <button id="puzzleClose">Tutup (Esc)</button>
+          </div>
+        </div>
+
+        <!-- Kanan: Info Edukasi -->
+        <div id="bentoRight" class="bento-panel hidden">
+          <h2 id="tutorialTitle"></h2>
+          <div id="tutorialContent">
+            <div class="tut-section">
+              <h3 class="tut-heading">Sejarah</h3>
+              <p id="tutSejarah"></p>
+            </div>
+            <div class="tut-section">
+              <h3 class="tut-heading">Keunggulan</h3>
+              <p id="tutKeunggulan"></p>
+            </div>
+            <div class="tut-section">
+              <h3 class="tut-heading">Kekurangan</h3>
+              <p id="tutKekurangan"></p>
+            </div>
+            <div class="tut-section">
+              <h3 class="tut-heading">Cara Kerja Simulator</h3>
+              <p id="tutCaraKerja"></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===================== SIDE NAVIGATION ===================== -->
+    <nav id="sideNav">
+      <button class="nav-btn" data-panel="inventory" title="Inventory [I]">
+        <img src="Asset/interact obj/Archieve cabinet.png" alt="" />
+        <span>Barang</span>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="nav-btn" data-panel="notebook" title="Notebook [N]">
+        <img src="Asset/interact obj/Notebook.png" alt="" />
+        <span>Catatan</span>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="nav-btn" data-panel="quests" title="Quest Journal [J]">
+        <img src="Asset/interact obj/Research journal.png" alt="" />
+        <span>Quest</span>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="nav-btn" data-panel="ciphers" title="Cipher Guide [C]">
+        <img src="Asset/interact obj/Encrypted file icon.png" alt="" />
+        <span>Cipher</span>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="nav-btn" data-panel="board" title="Board [B]">
+        <img src="Asset/interact obj/Whiteboard.png" alt="" />
+        <span>Board</span>
+        <div class="notif-dot"></div>
+      </button>
+    </nav>
+
+    <!-- ===================== PANEL: INVENTORY ===================== -->
+    <div id="panel-inventory" class="side-panel">
+      <div class="panel-header">
+        <h2>Inventory</h2>
+        <button class="panel-close" data-panel="inventory">✕</button>
+      </div>
+      <div class="panel-body" id="inventoryContent">
+        <p class="panel-empty">Belum ada barang.</p>
+      </div>
+    </div>
+
+    <!-- ===================== PANEL: NOTEBOOK ===================== -->
+    <div id="panel-notebook" class="side-panel">
+      <div class="panel-header">
+        <h2>Notebook</h2>
+        <button class="panel-close" data-panel="notebook">✕</button>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="nb-people">People</button>
+        <button class="tab-btn"        data-tab="nb-locations">Locations</button>
+        <button class="tab-btn"        data-tab="nb-keywords">Keywords</button>
+      </div>
+      <div id="nb-people"    class="tab-content active panel-body"></div>
+      <div id="nb-locations" class="tab-content panel-body"></div>
+      <div id="nb-keywords"  class="tab-content panel-body"></div>
+    </div>
+
+    <!-- ===================== PANEL: QUEST JOURNAL ===================== -->
+    <div id="panel-quests" class="side-panel">
+      <div class="panel-header">
+        <h2>Quest Journal</h2>
+        <button class="panel-close" data-panel="quests">✕</button>
+      </div>
+      <div class="panel-body" id="questsContent"></div>
+    </div>
+
+    <!-- ===================== PANEL: CIPHER GUIDE ===================== -->
+    <div id="panel-ciphers" class="side-panel">
+      <div class="panel-header">
+        <h2>Cipher Guide</h2>
+        <button class="panel-close" data-panel="ciphers">✕</button>
+      </div>
+      <div class="panel-body" id="ciphersContent"></div>
+    </div>
+
+    <!-- ===================== PANEL: INVESTIGATION BOARD ===================== -->
+    <div id="panel-board" class="side-panel">
+      <div class="panel-header">
+        <h2>Investigation Board</h2>
+        <button class="panel-close" data-panel="board">✕</button>
+      </div>
+      <div class="panel-body" id="boardContent">
+        <svg id="boardSVG" viewBox="0 0 530 460" width="100%"></svg>
+      </div>
+    </div>
+
+    </div> <!-- #gameContainer end -->
+
+    <!-- ===================== MAP SCREEN ===================== -->
+    <div id="mapScreen" class="hidden">
+      <div class="map-header">
+        <span class="map-title">Peta Investigasi</span>
+        <span class="map-hint">ESC / M untuk kembali</span>
+      </div>
+      <button id="mapCloseBtn" class="map-close-btn">✕ Tutup</button>
+      <!-- Location labels positioned as % of map image (1536×1092 source) -->
+      <button class="map-loc" data-room="office"    style="left:26.8%; top:40.0%">Professor's Office</button>
+      <button class="map-loc" data-room="lab"       style="left:76.7%; top:31.1%">Research Laboratory</button>
+      <button class="map-loc" data-room="library"   style="left:55.0%; top:19.7%">University Library</button>
+      <button class="map-loc" data-room="archive"   style="left:75.5%; top:61.1%">Underground Archive</button>
+      <button class="map-loc" data-room="server"    style="left:23.7%; top:67.2%">Server Facility</button>
+      <button class="map-loc" data-room="abandoned" style="left:17.4%; top:9.2%">Abandoned Facility</button>
+    </div>
+
+    <!-- ===================== EPILOGUE SCREEN ===================== -->
+    <div id="epilogueScreen" class="hidden">
+      <div id="epilogueText"></div>
+      <div id="epilogueAnimation" class="hidden">
+        <div class="epi-char" id="epiPlayer"></div>
+        <div class="epi-char" id="epiProf"></div>
+      </div>
+      <div id="epilogueHint" class="hidden">[Tekan SPASI untuk lanjut]</div>
+    </div>
+
+    <!-- ===================== END SCREEN ===================== -->
+    <div id="endScreen" class="hidden">
+      <div id="endBox">
+        <div class="end-tag">TAMAT</div>
+        <h1 class="end-title">The Vanishing Professor</h1>
+        <p class="end-sub">Kebenaran Project Chronos telah terungkap.<br>
+          Dr. Ratna ditangkap. Profesor Arga aman.<br>
+          Dr. Bima terbebas dari tuduhan.</p>
+        <div class="end-divider"></div>
+        <p class="end-credits">Terima kasih telah memainkan</p>
+        <button id="endRestartBtn" class="end-btn">Mainkan Ulang</button>
+      </div>
+    </div>
+
+  </div><!-- #viewport -->
+
+  <!-- Engine modular -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
