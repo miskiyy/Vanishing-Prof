@@ -211,6 +211,50 @@ html, body {
   display: flex;
   flex-direction: column;
 }
+.bento-left-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+.puzzle-info-column,
+.puzzle-interact-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+#puzzleLeftCheatsheet {
+  margin-top: 10px;
+  border-top: 1px dashed rgba(74, 90, 128, 0.4);
+  padding-top: 14px;
+  animation: slideDown 0.25s ease-out;
+}
+#puzzleLeftCheatsheet .cheatsheet-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+#puzzleToggleKamus {
+  background: #2a3043;
+  color: #fff;
+  border: 2px solid #4a5a80;
+  transition: all 0.2s ease;
+}
+#puzzleToggleKamus:hover {
+  background: #3c4560;
+  border-color: var(--accent);
+}
+#puzzleToggleKamus.active {
+  background: var(--accent);
+  color: #0b0b10;
+  border-color: var(--accent);
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 #bentoRight {
   flex: 0.8;
   min-width: 300px;
@@ -279,6 +323,7 @@ html, body {
 #puzzleClose  { background: #2a3043; color: #fff; }
 #puzzleToggleHelp { display: none; background: #2e3852; color: #fff; border: 2px solid #4a5a80; }
 #puzzleCloseHelp  { display: none; }
+#puzzleJumpToInput { display: none; background: rgba(74,90,128,0.22); color: #cfd2dc; border: 1px solid rgba(255,255,255,0.14); }
 
 /* Info Edukasi (Bento Kanan) */
 #tutorialTitle {
@@ -1311,18 +1356,57 @@ html, body {
   /* Puzzle: stack vertically, but optimized for landscape mobile */
   #bentoBox {
     flex-direction: column;
-    width: min(98vw, 700px);
+    width: min(98vw, 840px);
     max-height: 92vh;
+    overflow: hidden; /* Avoid double scrollbars */
+  }
+  #bentoLeft {
+    min-width: 0;
+    padding: 12px;
+    height: 100%;
+    overflow: hidden !important; /* Columns scroll instead */
+    display: flex;
+    flex-direction: column;
+  }
+  .bento-left-content {
+    flex-direction: row;
+    gap: 16px;
+    align-items: stretch;
+    height: 100%;
+    min-height: 0;
+  }
+  .puzzle-info-column {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .puzzle-interact-column {
+    flex: 1.1;
+    overflow-y: auto;
+    padding-right: 6px;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  #bentoRight {
+    min-width: 0;
+    flex: 1;
+    padding: 12px;
+    height: 100%;
     overflow-y: auto;
   }
-  #bentoLeft { min-width: 0; padding: 12px; }
-  #bentoRight { min-width: 0; flex: 0 0 auto; padding: 12px; }
 
   /* Hide bentoRight (Panduan) by default on landscape mobile and show Toggle Help button */
   #bentoBox #bentoRight {
     display: none !important;
   }
   #puzzleToggleHelp {
+    display: inline-block !important;
+  }
+  #puzzleJumpToInput {
     display: inline-block !important;
   }
 
@@ -1334,7 +1418,7 @@ html, body {
     display: flex !important;
     width: 100%;
     height: 100%;
-    max-height: 90vh;
+    max-height: 100%;
     overflow-y: auto;
   }
   #puzzleCloseHelp {
@@ -1358,7 +1442,7 @@ html, body {
     margin-bottom: 8px;
     font-size: 12px;
     line-height: 1.4;
-    max-height: 75px;
+    max-height: 120px;
     overflow-y: auto;
   }
   .puzzle-cipher { margin-bottom: 8px; }
@@ -1606,3 +1690,279 @@ html, body {
   margin: 10px auto 0;
   display: block;
 }
+
+/* =====================================================================
+ * CREDIT SCREEN MODAL & CARDS
+ * ===================================================================== */
+.credit-modal-box {
+  max-width: 900px;
+  width: 95%;
+  background: rgba(10, 12, 20, 0.96);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 40px rgba(255, 213, 74, 0.15);
+}
+
+.credit-screen {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.credit-head {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  text-shadow: 0 0 10px rgba(255, 213, 74, 0.25);
+}
+
+.credit-task {
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 30px;
+  font-family: "Consolas", monospace;
+  letter-spacing: 1px;
+}
+
+.credit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.cr-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cr-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.cr-card:hover {
+  transform: translateY(-6px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 213, 74, 0.12);
+}
+
+.cr-card:hover::before {
+  opacity: 1;
+}
+
+.cr-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1.5px;
+  margin-bottom: 16px;
+}
+
+.cr-photo {
+  width: 105px;
+  height: 105px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-bottom: 16px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.cr-card:hover .cr-photo {
+  transform: scale(1.06);
+  border-color: var(--accent);
+}
+
+.cr-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.cr-nrp {
+  font-family: "Consolas", monospace;
+  font-size: 11px;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+
+.cr-email {
+  font-size: 11px;
+  color: var(--dim);
+  text-align: center;
+  word-break: break-all;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  width: 100%;
+  padding-top: 12px;
+  margin-top: auto;
+  transition: color 0.3s;
+}
+
+.cr-card:hover .cr-email {
+  color: #fff;
+}
+
+/* Responsive adjustments for credits screen */
+@media (max-width: 768px) {
+  .credit-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  .credit-modal-box {
+    max-width: 600px;
+  }
+}
+
+@media (max-width: 520px) {
+  .credit-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .cr-card {
+    padding: 18px 12px;
+  }
+  .credit-head {
+    font-size: 20px;
+  }
+  .credit-modal-box {
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+}
+
+/* =====================================================================
+ * CHEATSHEET & SCROLL UX IMPROVEMENTS
+ * ===================================================================== */
+.cheatsheet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 10px;
+  border-radius: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cheatsheet-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 6px 4px;
+  font-family: "Consolas", monospace;
+  font-size: 11px;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.cheatsheet-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent);
+}
+
+.cheatsheet-item .char-lbl {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 10px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.cheatsheet-item .char-val {
+  color: #fff;
+  font-weight: 600;
+}
+
+.scroll-indicator-hint {
+  display: none;
+  font-size: 11px;
+  color: var(--accent);
+  text-align: center;
+  padding: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  margin-top: 12px;
+  letter-spacing: 0.5px;
+  animation: pulse-scroll-hint 1.5s infinite alternate;
+  background: rgba(255, 213, 74, 0.03);
+  border-radius: 6px;
+}
+
+@keyframes pulse-scroll-hint {
+  0% { opacity: 0.35; transform: scale(0.99); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (max-height: 520px) {
+  .scroll-indicator-hint {
+    display: block;
+  }
+}
+
+/* Mobile: make sure puzzle actions remain reachable */
+@media (hover: none) and (pointer: coarse) {
+  #puzzleJumpToInput { touch-action: manipulation; }
+}
+
+/* Custom scrollbars to ensure scrollability is obvious */
+.bento-panel::-webkit-scrollbar,
+.cheatsheet-grid::-webkit-scrollbar,
+.puzzle-info-column::-webkit-scrollbar,
+.puzzle-interact-column::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.bento-panel::-webkit-scrollbar-track,
+.cheatsheet-grid::-webkit-scrollbar-track,
+.puzzle-info-column::-webkit-scrollbar-track,
+.puzzle-interact-column::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+}
+
+.bento-panel::-webkit-scrollbar-thumb,
+.cheatsheet-grid::-webkit-scrollbar-thumb,
+.puzzle-info-column::-webkit-scrollbar-thumb,
+.puzzle-interact-column::-webkit-scrollbar-thumb {
+  background: #4a5a80;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.bento-panel::-webkit-scrollbar-thumb:hover,
+.cheatsheet-grid::-webkit-scrollbar-thumb:hover,
+.puzzle-info-column::-webkit-scrollbar-thumb:hover,
+.puzzle-interact-column::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+

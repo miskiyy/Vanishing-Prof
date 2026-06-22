@@ -37,6 +37,9 @@ export function openPuzzle(puzzleId) {
   const cipherContainer = document.getElementById("puzzleCipherContainer");
   const bentoRight = document.getElementById("bentoRight");
 
+  // Extra controls
+  const cheatsheetToggle = document.getElementById("puzzleToggleHelp");
+
   state.modalOpen = true;
   promptEl?.classList.add("hidden");
   puzzleTitleEl.textContent    = p.title;
@@ -49,18 +52,102 @@ export function openPuzzle(puzzleId) {
   puzzleOverlayEl.dataset.puzzleId = puzzleId;
 
   // Render tutorial on the right if available
+  // Render tutorial on the right if available
   const toggleHelpBtn = document.getElementById("puzzleToggleHelp");
+  const tutCheatsheet = document.getElementById("tutCheatsheet");
+  const cheatsheetSection = document.getElementById("cheatsheetSection");
+  const jumpToInputBtn = document.getElementById("puzzleJumpToInput");
+
+  // Inline cheatsheet elements (left panel)
+  const toggleKamusBtn = document.getElementById("puzzleToggleKamus");
+  const leftCheatsheet = document.getElementById("puzzleLeftCheatsheet");
+  const leftCheatsheetContent = document.getElementById("puzzleLeftCheatsheetContent");
+
+  // Ensure per puzzle state resets
+  if (cheatsheetSection) cheatsheetSection.classList.add("hidden");
+  if (leftCheatsheet) leftCheatsheet.classList.add("hidden");
+  if (toggleKamusBtn) {
+    toggleKamusBtn.classList.remove("active");
+    toggleKamusBtn.classList.add("hidden");
+    toggleKamusBtn.onclick = null;
+  }
+
+  // Load cheatsheet HTML for both inline (left) and educational panel (right)
+  const cheatsheetHTML = generateCheatsheet(p);
+  if (cheatsheetHTML) {
+    // Populate inline cheatsheet
+    if (leftCheatsheetContent) leftCheatsheetContent.innerHTML = cheatsheetHTML;
+    if (toggleKamusBtn) {
+      toggleKamusBtn.classList.remove("hidden");
+      toggleKamusBtn.onclick = () => {
+        const isHidden = leftCheatsheet.classList.contains("hidden");
+        if (isHidden) {
+          leftCheatsheet.classList.remove("hidden");
+          if (cheatsheetSection) cheatsheetSection.classList.remove("hidden");
+          toggleKamusBtn.classList.add("active");
+          leftCheatsheet.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        } else {
+          leftCheatsheet.classList.add("hidden");
+          if (cheatsheetSection) cheatsheetSection.classList.add("hidden");
+          toggleKamusBtn.classList.remove("active");
+        }
+      };
+    }
+  }
+
   if (p.tutorial) {
     bentoRight.classList.remove("hidden");
     if (toggleHelpBtn) toggleHelpBtn.classList.remove("hidden");
+
     document.getElementById("tutorialTitle").textContent = "Panduan: " + p.kind;
     document.getElementById("tutSejarah").textContent = p.tutorial.sejarah;
     document.getElementById("tutKeunggulan").textContent = p.tutorial.keunggulan;
     document.getElementById("tutKekurangan").textContent = p.tutorial.kekurangan;
     document.getElementById("tutCaraKerja").textContent = p.tutorial.caraKerja;
+
+    // Load cheatsheet HTML in the right panel (keep hidden by default)
+    if (tutCheatsheet && cheatsheetSection) {
+      if (cheatsheetHTML) {
+        tutCheatsheet.innerHTML = cheatsheetHTML;
+      }
+      cheatsheetSection.classList.add("hidden"); // Default off
+    }
+
+    // Mobile UX: show "Ke Input" button if screen is likely small
+    if (jumpToInputBtn) {
+      jumpToInputBtn.classList.remove("hidden");
+      jumpToInputBtn.onclick = () => {
+        try {
+          const target = puzzleInputEl;
+          target?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+          target?.focus?.();
+        } catch (e) {}
+      };
+    }
+
+    // Cheat sheet toggle: sync with right panel toggle as well
+    if (toggleHelpBtn) {
+      toggleHelpBtn.onclick = () => {
+        const isHidden = cheatsheetSection?.classList.contains("hidden");
+        if (!cheatsheetSection) return;
+        if (isHidden) {
+          cheatsheetSection.classList.remove("hidden");
+          leftCheatsheet?.classList.remove("hidden");
+          toggleKamusBtn?.classList.add("active");
+        } else {
+          cheatsheetSection.classList.add("hidden");
+          leftCheatsheet?.classList.add("hidden");
+          toggleKamusBtn?.classList.remove("active");
+        }
+      };
+    }
   } else {
     bentoRight.classList.add("hidden");
-    if (toggleHelpBtn) toggleHelpBtn.classList.add("hidden");
+    if (toggleHelpBtn) {
+      toggleHelpBtn.classList.add("hidden");
+      toggleHelpBtn.onclick = null;
+    }
+    if (jumpToInputBtn) jumpToInputBtn.classList.add("hidden");
   }
 
   // Reset Simulator UI
@@ -283,9 +370,107 @@ export function showPuzzleSuccessDialog(p, onDone) {
 export function closePuzzle() {
   const puzzleOverlayEl = document.getElementById("puzzleOverlay");
   puzzleOverlayEl?.classList.add("hidden");
+
+  // Reset UI toggles
   document.getElementById("bentoBox")?.classList.remove("show-help");
+  document.getElementById("cheatsheetSection")?.classList.add("hidden");
+
+  const leftCheatsheet = document.getElementById("puzzleLeftCheatsheet");
+  const toggleKamusBtn = document.getElementById("puzzleToggleKamus");
+  if (leftCheatsheet) leftCheatsheet.classList.add("hidden");
+  if (toggleKamusBtn) {
+    toggleKamusBtn.classList.remove("active");
+    toggleKamusBtn.classList.add("hidden");
+  }
+
   const dialogOpen = !document.getElementById("dialog")?.classList.contains("hidden");
   if (!state.openPanel && !dialogOpen) {
     state.modalOpen = false;
   }
+}
+
+function generateCheatsheet(p) {
+  const kind = p.kind;
+  if (kind.includes("Caesar")) {
+    let shift = 3;
+    if (p.cipher.includes("JOYVUVZ")) shift = 7;
+    
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let html = "";
+    for (let i = 0; i < alphabet.length; i++) {
+      const cipherChar = alphabet[i];
+      const plainChar = shiftChar(cipherChar, -shift);
+      html += `
+        <div class="cheatsheet-item">
+          <span class="char-lbl">${cipherChar}</span>
+          <span class="char-val">➔ ${plainChar}</span>
+        </div>`;
+    }
+    return html;
+  }
+  
+  if (kind.includes("Atbash")) {
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let html = "";
+    for (let i = 0; i < alphabet.length; i++) {
+      const c = alphabet[i];
+      const mirror = String.fromCharCode(90 - (c.charCodeAt(0) - 65));
+      html += `
+        <div class="cheatsheet-item">
+          <span class="char-lbl">${c}</span>
+          <span class="char-val">➔ ${mirror}</span>
+        </div>`;
+    }
+    return html;
+  }
+  
+  if (kind.includes("Morse")) {
+    let html = "";
+    for (const [char, code] of Object.entries(MORSE_DICT)) {
+      if (char === ' ') continue;
+      html += `
+        <div class="cheatsheet-item">
+          <span class="char-lbl">${char}</span>
+          <span class="char-val">${code}</span>
+        </div>`;
+    }
+    return html;
+  }
+  
+  if (kind.includes("Binary")) {
+    let html = "";
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (let i = 0; i < alphabet.length; i++) {
+      const char = alphabet[i];
+      const binary = char.charCodeAt(0).toString(2).padStart(8, '0');
+      html += `
+        <div class="cheatsheet-item" style="grid-column: span 2;">
+          <span class="char-lbl">${char}</span>
+          <span class="char-val" style="font-size: 10px;">${binary}</span>
+        </div>`;
+    }
+    html += `
+      <div class="cheatsheet-item" style="grid-column: span 2;">
+        <span class="char-lbl">[Spasi]</span>
+        <span class="char-val" style="font-size: 10px;">00100000</span>
+      </div>`;
+    return html;
+  }
+  
+  if (kind.includes("Vigenère")) {
+    const key = "CHRONOS";
+    let html = "";
+    for (let i = 0; i < key.length; i++) {
+      const char = key[i];
+      const shift = char.charCodeAt(0) - 65;
+      html += `
+        <div class="cheatsheet-item" style="grid-column: span 2; flex-direction: row; gap: 8px;">
+          <span class="char-lbl" style="margin-bottom: 0;">Pos ${i+1} (${char}):</span>
+          <span class="char-val">Geser -${shift}</span>
+        </div>`;
+    }
+    return html;
+  }
+  
+  return "";
 }

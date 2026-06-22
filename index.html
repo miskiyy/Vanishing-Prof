@@ -62,18 +62,43 @@
 
     <!-- ===================== CREDITS MODAL ===================== -->
     <div id="creditScreen" class="hidden">
-      <div class="modal-box">
+      <div class="modal-box credit-modal-box">
         <div class="modal-header">
           <h2>Kredit</h2>
           <button class="modal-close" id="creditCloseBtn">✕</button>
         </div>
-        <div class="modal-body" style="text-align: center;">
-          <p><strong>The Vanishing Professor</strong></p>
-          <br>
-          <p>Dikembangkan sebagai proyek edukasi interaktif.</p>
-          <br>
-          <p>Semua aset gambar & teks dibantu oleh AI.</p>
-          <p>Efek Suara dari Pixabay.</p>
+        <div class="modal-body">
+          <div class="credit-screen">
+            <div class="credit-head">Tim Pengembang</div>
+            <div class="credit-task">Proyek Akhir Game Edukasi Kriptografi</div>
+            <div class="credit-grid">
+              <!-- Maker 1 -->
+              <div class="cr-card">
+                <div class="cr-role">Developer & Designer</div>
+                <div class="cr-photo" style="background-image: url('Asset/maker1.png');"></div>
+                <div class="cr-name">Miskiyah</div>
+                <div class="cr-nrp">NRP 5025231119</div>
+                <div class="cr-email">ayamiskiyah46@gmail.com</div>
+              </div>
+              
+              <!-- Maker 2 -->
+              <div class="cr-card">
+                <div class="cr-role">Developer & Artist</div>
+                <div class="cr-photo" style="background-image: url('Asset/maker2.png');"></div>
+                <div class="cr-name">Winda Nafiqih Irawan</div>
+                <div class="cr-nrp">NRP 5025231065</div>
+                <div class="cr-email">windaforkwork@gmail.com</div>
+              </div>
+              
+              <!-- Lecturer -->
+              <div class="cr-card">
+                <div class="cr-role">Dosen Pembimbing</div>
+                <div class="cr-photo" style="background-image: url('Asset/lecturer.png');"></div>
+                <div class="cr-name">Imam Kuswardayan, S.Kom., MT.</div>
+                <div class="cr-email">imam@its.ac.id</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -126,21 +151,41 @@
         
         <!-- Kiri: Simulator & Puzzle -->
         <div id="bentoLeft" class="bento-panel">
-          <div id="puzzleTitle"></div>
-          <div id="puzzleKind"></div>
-          <pre id="puzzlePrompt"></pre>
-          <div class="puzzle-cipher" id="puzzleCipherContainer">
-            <span class="puzzle-label">Encrypted:</span>
-            <code id="puzzleCipher"></code>
-          </div>
-          <div id="puzzleSimulatorContainer" class="hidden"></div>
-          <input id="puzzleInput" type="text" autocomplete="off"
-                 placeholder="Ketik jawaban di sini..." />
-          <div id="puzzleFeedback"></div>
-          <div class="puzzle-actions">
-            <button id="puzzleToggleHelp" class="hidden">Panduan</button>
-            <button id="puzzleSubmit">Submit</button>
-            <button id="puzzleClose">Tutup (Esc)</button>
+          <div class="bento-left-content">
+            
+            <!-- Kolom Kiri: Informasi Soal & Kamus -->
+            <div class="puzzle-info-column">
+              <div id="puzzleTitle"></div>
+              <div id="puzzleKind"></div>
+              <pre id="puzzlePrompt"></pre>
+              <div class="puzzle-cipher" id="puzzleCipherContainer">
+                <span class="puzzle-label">Encrypted:</span>
+                <code id="puzzleCipher"></code>
+              </div>
+              
+              <!-- Kamus Sederhana (Collapsible) -->
+              <div id="puzzleLeftCheatsheet" class="hidden">
+                <div class="cheatsheet-title">📖 Kamus Sederhana</div>
+                <div id="puzzleLeftCheatsheetContent" class="cheatsheet-grid"></div>
+              </div>
+            </div>
+
+            <!-- Kolom Kanan: Simulator & Input Jawaban -->
+            <div class="puzzle-interact-column">
+              <div id="puzzleSimulatorContainer" class="hidden"></div>
+              <input id="puzzleInput" type="text" autocomplete="off"
+                     placeholder="Ketik jawaban di sini..." />
+              <div id="puzzleFeedback"></div>
+              <div class="scroll-indicator-hint">Scroll ke bawah untuk simulator & input jawaban ↓</div>
+              <div class="puzzle-actions">
+                <button id="puzzleToggleKamus" class="hidden">📖 Kamus</button>
+                <button id="puzzleToggleHelp" class="hidden">Panduan</button>
+                <button id="puzzleJumpToInput" class="hidden">Ke Input ↓</button>
+                <button id="puzzleSubmit">Submit</button>
+                <button id="puzzleClose">Tutup (Esc)</button>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -149,6 +194,10 @@
           <button id="puzzleCloseHelp" class="hidden">← Kembali ke Kuis</button>
           <h2 id="tutorialTitle"></h2>
           <div id="tutorialContent">
+            <div class="tut-section" id="cheatsheetSection">
+              <h3 class="tut-heading" style="color: var(--accent);">Kamus / Cheatsheet</h3>
+              <div id="tutCheatsheet" class="cheatsheet-grid"></div>
+            </div>
             <div class="tut-section">
               <h3 class="tut-heading">Sejarah</h3>
               <p id="tutSejarah"></p>
@@ -166,6 +215,7 @@
               <p id="tutCaraKerja"></p>
             </div>
           </div>
+          <div class="scroll-indicator-hint">Scroll ke bawah untuk panduan lengkap ↓</div>
         </div>
 
       </div>
